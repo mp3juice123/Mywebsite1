@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inside Out: Motivational Quotes for Today</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+  :root {
+    --main-bg: #f4f6f9;
+    --header-bg: #1e1e2f;
+    --text-primary: #2a2a2a;
+    --quote-border: #4b0082;
+    --modal-bg: #ffffff;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--main-bg);
+    background-image: url('https://m.media-amazon.com/images/M/MV5BYWY3MDE2Y2UtOTE3Zi00MGUzLTg2MTItZjE1ZWVkMGVlODRmXkEyXkFqcGc@._V1_.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--text-primary);
+  }
+
+  .splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1e1e2f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.4rem;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.4;
+    z-index: 2000;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 5s ease, visibility 5s ease;
+  }
+
+  .hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  header {
+    background-color: var(--header-bg);
+    padding: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .prompt-question {
+    text-align: center;
+    margin: 2rem auto 0;
+    animation: fadeIn 10s ease forwards;
+  }
+
+  .prompt-question h2 {
+    font-size: 1.8rem;
+    color: #4b0082;
+  }
+
+  .category-row {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .category-title {
+    font-size: 1.6rem;
+    color: #4b0082;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .emotion-card {
+    min-width: 180px;
+    height: 120px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #fff;
+    padding: 0 1rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255,255,255,0.15);
+    animation: bounceIn 1s ease-out;
+  }
+
+  .emotion-card i {
+    font-size: 1.6rem;
+    margin-right: 0.4rem;
+  }
+
+  .emotion-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .emotion-card:active {
+    animation: pressDown 0.2s forwards;
+  }
+
+  .happy { background: linear-gradient(to right, #fff54e, #FAE39B); }
+  .sad { background: linear-gradient(to right, #0b389d, #A1B3D7); }
+  .fear { background: linear-gradient(to right, #552586, #B589D6); }
+  .anger { background: linear-gradient(to right, #DC1C13, #F6BDC0); }
+  .anxiety { background: linear-gradient(to right, #f38338, #95522E); }
+
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    60% { opacity: 1; transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes pressDown {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+    100% { transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @media (max-width: 600px) {
+    .emotion-card {
+      min-width: 140px;
+      height: 100px;
+      font-size: 1rem;
+    }
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: var(--modal-bg);
+    margin: auto;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+  }
+
+  .close-btn:hover {
+    color: #000;
+  }
+
+  .quote {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  button {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    background-color: #4b0082;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  button:hover:not(:disabled) {
+    background-color: #370062;
+  }
+  </style>
+</head>
+<body>
+  <div id="splash1" class="splash-screen">INSIDE OUT: MOTIVATIONAL QUOTES FOR TODAY</div>
+  <div id="splash2" class="splash-screen hidden">HOW ARE YOU FEELING TODAY?</div>
+  <div id="mainContent" style="display: none;">
+    <header>Choose an emotion to begin</header>
+    <div class="prompt-question"><h2></h2></div>
+    <div class="category-row">
+      <div class="category-title"></div>
+      <div class="card-container">
+        <div class="emotion-card happy" onclick="showQuotes('happy')"><i class="fa-solid fa-face-smile"></i> Joy</div>
+        <div class="emotion-card sad" onclick="showQuotes('sad')"><i class="fa-solid fa-face-sad-tear"></i> Sadness</div>
+        <div class="emotion-card fear" onclick="showQuotes('fear')"><i class="fa-solid fa-heart-pulse"></i> Fear</div>
+        <div class="emotion-card anger" onclick="showQuotes('anger')"><i class="fa-solid fa-face-angry"></i> Anger</div>
+        <div class="emotion-card anxiety" onclick="showQuotes('anxiety')"><i class="fa-solid fa-face-grimace"></i> Anxiety</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="quoteModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 id="modalTitle">Quotes</h2>
+      <div id="quoteList"></div>
+    </div>
+  </div>
+  <footer>&copy; 2025 Inside Out Quotes. All rights reserved.</footer>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('splash1').classList.add('hidden');
+        document.getElementById('splash2').classList.remove('hidden');
+      }, 3000);
+      setTimeout(() => {
+        document.getElementById('splash2').classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+      }, 9000);
+    });
+
+    const quotes = {
+  happy: [
+    "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart.",
+    "There are a lot of things to be happy about! – Joy",
+    "Happiness is not something ready-made. It comes from your own actions. – Dalai Lama",
+    "The joy we feel has little to do with the circumstances of our lives and everything to do with the focus of our lives. – Russell M. Nelson",
+    "Sometimes joy sneaks in through a door you didn’t know you left open.",
+    "This is the day that the Lord has made; let us rejoice and be glad in it. – Psalm 118:24",
+    "A joyful heart is good medicine, but a crushed spirit dries up the bones. – Proverbs 17:22",
+    "Rejoice in the Lord always; again I will say, Rejoice. – Philippians 4:4",
+    "You make known to me the path of life; in your presence there is fullness of joy. – Psalm 16:11",
+    "The Lord has done great things for us, and we are filled with joy. – Psalm 126:3"
+  ],
+
+  sad: [
+    "Crying helps me slow down and obsess over the weight of life’s problems. – Sadness",
+    "It’s okay to be sad. – Sadness",
+    "Tears are words the heart can’t express.",
+    "There is no despair so absolute as that which comes with the first moments of our first sorrow. – George Eliot",
+    "Sometimes, we need sadness to appreciate the good times. – Inside Out",
+    "The Lord is near to the brokenhearted and saves the crushed in spirit. – Psalm 34:18",
+    "Blessed are those who mourn, for they shall be comforted. – Matthew 5:4",
+    "He heals the brokenhearted and binds up their wounds. – Psalm 147:3",
+    "Weeping may endure for a night, but joy comes in the morning. – Psalm 30:5",
+    "Cast all your anxiety on him because he cares for you. – 1 Peter 5:7"
+  ],
+
+  fear: [
+    "I’m always anxious about everything! – Fear",
+    "What if we get lost? What if they don’t like us? – Fear",
+    "You don’t have to control your thoughts. Just stop letting them control you. – Dan Millman",
+    "Do one thing every day that scares you. – Eleanor Roosevelt",
+    "Sometimes the worst place you can be is in your own head.",
+    "Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. – Philippians 4:6",
+    "When I am afraid, I put my trust in you. – Psalm 56:3",
+    "Cast your burden on the Lord, and he will sustain you. – Psalm 55:22",
+    "Peace I leave with you; my peace I give to you. – John 14:27",
+    "Anxiety weighs down the heart, but a kind word cheers it up. – Proverbs 12:25"
+  ],
+
+  anger: [
+    "Congratulations San Francisco, you’ve ruined pizza! – Anger",
+    "I saw a really angry face, and I thought: that’s me. – Anger",
+    "Anger is never without a reason, but seldom with a good one. – Benjamin Franklin",
+    "Speak when you are angry and you’ll make the best speech you’ll ever regret. – Ambrose Bierce",
+    "It’s better to cry than to be angry, because anger hurts others while tears flow silently through the soul and cleanse the heart. – Pope John Paul II",
+    "Be angry and do not sin; do not let the sun go down on your anger. – Ephesians 4:26",
+    "A soft answer turns away wrath, but a harsh word stirs up anger. – Proverbs 15:1",
+    "Refrain from anger, and forsake wrath! Fret not yourself; it tends only to evil. – Psalm 37:8",
+    "Whoever is slow to anger has great understanding. – Proverbs 14:29",
+    "Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger. – James 1:19"
+  ],
+
+   anxiety: [
+  // Quotes
+  "You don’t have to control your thoughts. Just stop letting them control you. – Dan Millman",
+  "Sometimes the worst place you can be is in your own head.",
+  "Do one thing every day that scares you. – Eleanor Roosevelt",
+  "Worrying is like paying a debt you don’t owe. – Mark Twain",
+  "Almost everything will work again if you unplug it for a few minutes… including you. – Anne Lamott",
+
+  // Bible Verses
+  "Do not be anxious about anything, but in every situation… present your requests to God. – Philippians 4:6",
+  "When I am afraid, I put my trust in you. – Psalm 56:3",
+  "Cast all your anxiety on him because he cares for you. – 1 Peter 5:7",
+  "Anxiety weighs down the heart, but a kind word cheers it up. – Proverbs 12:25",
+  "Cast your burden on the Lord, and he will sustain you. – Psalm 55:22"
+
+  ]
+};
+
+    let currentQuotes = [];
+    let currentIndex = 0;
+
+    function showQuotes(emotion) {
+      currentQuotes = quotes[emotion];
+      currentIndex = 0;
+      document.getElementById('modalTitle').textContent = `${emotion.charAt(0).toUpperCase() + emotion.slice(1)} Quotes`;
+      updateQuoteDisplay();
+      document.getElementById('quoteModal').style.display = 'flex';
+    }
+
+    function updateQuoteDisplay() {
+      const quoteText = currentQuotes[currentIndex];
+      const isFirst = currentIndex === 0;
+      const isLast = currentIndex === currentQuotes.length - 1;
+      document.getElementById('quoteList').innerHTML = `
+        <p class="quote">${quoteText}</p>
+        <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+          <button onclick="prevQuote()" ${isFirst ? 'disabled' : ''}>⬅️ Previous</button>
+          <button onclick="nextQuote()" ${isLast ? 'disabled' : ''}>Next ➡️</button>
+        </div>
+      `;
+    }
+
+    function nextQuote() {
+      if (currentIndex < currentQuotes.length - 1) {
+        currentIndex++;
+        updateQuoteDisplay();
+      }
+    }
+
+    function prevQuote() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateQuoteDisplay();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('quoteModal').style.display = 'none';
+    }
+
+    window.onclick = function (e) {
+      if (e.target === document.getElementById('quoteModal')) closeModal();
+    };
+  </script>
+</body>
+</html>
